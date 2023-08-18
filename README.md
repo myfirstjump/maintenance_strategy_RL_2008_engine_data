@@ -12,8 +12,8 @@ docker build -t gymnasium_tf .
 docker run --rm -it -v $(pwd):/app gymnasium_tf python main.py
 ```
 
-<!-- # process -->
 
+```
 # ====================================== Training Epoch 1 =====================================
 # 以引擎 unit: 164 做為training data.
 # 以引擎 unit: 157 做為validation data.
