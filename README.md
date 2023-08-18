@@ -1,19 +1,18 @@
-# Engine_PHM_2008
+# RL model for maintenance strategy building
 
 ## build image
 
 ```bash
-docker build  -t enginer_phm_2008 .
+docker build -t gymnasium_tf .
 ```
 
 ## run the example
 
 ```bash 
-docker run --gpus all -v $(pwd):/exp -ti enginer_phm_2008 /bin/bash
+docker run --rm -it -v $(pwd):/app gymnasium_tf python main.py
+```
 
-# inside container
-cd exp/
-python main.py
+<!-- # process -->
 
 # ====================================== Training Epoch 1 =====================================
 # 以引擎 unit: 164 做為training data.
