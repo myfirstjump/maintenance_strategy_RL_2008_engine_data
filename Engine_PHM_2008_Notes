@@ -1,0 +1,23 @@
+
+
+
+128 Engines
+
+1. different wear out stages and manufacturing variation
+2. 3 types of operational settings.
+3. Contaminated data with sensor noise.
+4. 26 colummns
+
+Objectives:
+to predict the # of remaining operational cycles.
+
+
+
+Data:
+
+	Training:
+		col_1表示引擎編號: 1 ~ 218
+		col_2表示time, in cycles: Cycle 1, 2, 3, ..... 每個引擎當下的cycle
+		col_3, 4, 5表示 op settings: 
+		
+		
