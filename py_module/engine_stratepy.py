@@ -5,7 +5,9 @@ import gymnasium as gym
 import random
 from collections import deque
 
-class EngineEquipment(object):
+DEFAULT_PREVIOUS_COUNT = 10
+
+class EngineState(object):
     def __init__(self, source_data):
         self.config_obj = Configuration()
         self.unit = random.choice(self.config_obj.train_engine_number) ### sample 1 engine# from training set
@@ -22,11 +24,18 @@ class EngineEquipment(object):
     def be_replaced(self):
         pass
 
+
 class EngineStrategy(gym.Env):
-    def __init__(self, data, k):
+
+    metadata = {'render.modes':['human']}
+    spec = gym.envs.registration.EnvSpec("MaintenanceStrategy-v0")
+
+
+    def __init__(self, data, k=DEFAULT_PREVIOUS_COUNT):
         super(EngineStrategy, self).__init__()
         self.config_obj = Configuration()
 
+        self.episode_max_cycle = 1000
         self.k = k ### K表示加入歷史前K個狀態成為「批次狀態」
         self.frames = deque([], maxlen=k)
 
@@ -37,9 +46,7 @@ class EngineStrategy(gym.Env):
             dtype = np.float16
         )
 
-        self.action_space = gym.spaces.Discrete(3,) ### A1: no action, A2: lubrication, A3: replacement
-
-        self.episode_max_cycle = 1000
+        self.action_space = gym.spaces.Discrete(3,) ### A1: no action, A2: lubrication, A3: replacement     
     
     def _get_ob(self):
         return np.array(self.frames)
@@ -51,8 +58,9 @@ class EngineStrategy(gym.Env):
 
         self.episode_cnt = 0 ### 計數器，用來確認是否達到episode_max_cycle = 1000
         self.episode_reward = 0
-        self.engine_data = EngineEquipment()
+        self.engine_data = EngineState()
 
+        ob = self.engine_data
         ### 加入先前k次狀態(批次狀態)
         for _ in range(self.k):
             self.frames.append(ob)
@@ -91,9 +99,6 @@ class EngineStrategy(gym.Env):
             done = True
 
         return self.frames, reward, done, []
-    
-
-    env = EngineEquipment()
     
         
 
