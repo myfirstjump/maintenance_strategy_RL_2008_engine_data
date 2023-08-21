@@ -51,11 +51,10 @@ def main_flow():
     data, testing_data = main_obj.data_loading()
     data = main_obj.data_preprocessing(data)
     testing_data = main_obj.data_preprocessing(testing_data)
-    
-    print(data)
 
     unit_data = data[data['unit'] == 50]
-    print(unit_data.iloc[0,])
+    print(unit_data)
+    print(unit_data.iloc[500,])
     # Training
 
 
