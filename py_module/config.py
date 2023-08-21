@@ -15,8 +15,8 @@ class Configuration(object):
         self.test_file_name = "final_test.txt"
 
         # 2008 Engine Data
-        self.train_engine_number = 218
-        self.test_engine_number = 218
+        self.train_engine_amount = 218
+        self.test_engine_amount = 218
         self.standardization_features = ['op_setting_1', 'op_setting_2', 'op_setting_3'] + ['sensor_' + str(i) for i in range(1, 22)]
         self.previous_p_times = 15 ### RL states
         self.checkpoint_path = os.path.join(self.data_folder, "training_record", "cp.ckpt")
