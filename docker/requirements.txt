@@ -1,4 +1,4 @@
-gymnasium
+gym
 tensorboard
 torch
 protobuf

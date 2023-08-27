@@ -1,18 +1,21 @@
 from py_module.config import Configuration
-import gymnasium as gym
+# import gymnasium as gym
+import gym
 
 import enum
 import numpy as np
 import random
 from collections import deque
 
-LUBRICATION_LOOKBACK = 15
-LUBRICATION_REWARD = -10
-REPLACEMENT_REWARD = -250
-DO_NOTHING_REWARD = 1
-FAILURE_REWARD = -600
-PREVIOUS_STATE_USED = Configuration().previous_p_times
-ENGINE_AMOUNT = Configuration().train_engine_amount
+
+config_obj = Configuration()
+LUBRICATION_LOOKBACK = config_obj.LUBRICATION_LOOKBACK
+LUBRICATION_REWARD = config_obj.LUBRICATION_REWARD
+REPLACEMENT_REWARD = config_obj.REPLACEMENT_REWARD
+DO_NOTHING_REWARD = config_obj.DO_NOTHING_REWARD
+FAILURE_REWARD = config_obj.FAILURE_REWARD
+PREVIOUS_STATE_USED = config_obj.previous_p_times
+ENGINE_AMOUNT = config_obj.train_engine_amount
 
 class Actions(enum.Enum):
     Nothing = 0
@@ -36,12 +39,16 @@ class State:
 
         assert offset >= self.previous_state_used - 1
         ### 重新抽取一支引擎資料
-        self.unit = random.choice(ENGINE_AMOUNT) ### sample 1 engine #
-        self.unit_data = self.engine_data[self.engine_data["unit"] == self.unit]
-        print("Sample 1 engine data from source data: {}".format(self.unit))
+        self._unit = random.choice(range(1, ENGINE_AMOUNT)) ### sample 1 engine #
+
+        # print("Engine data: {}".format(self.engine_data))
+        self._unit_data = self.engine_data[self.engine_data["unit"] == self._unit]
+        self._unit_data = self._unit_data.drop('unit', axis=1)
+        print("Sample 1 engine data from source data: {}".format(self._unit))
+        print(self._unit_data)
 
         self._offset = offset
-        self._data = self.unit_data
+        self._data = self._unit_data
         self._cycle_num = len(self._data)
 
     
@@ -60,7 +67,7 @@ class State:
                 res.append(self._data.iloc[0, ])
             else:
                 res.append(self._data.iloc[state_cur, ])
-        res = np.array(res)
+        res = np.array(res, dtype=np.float32)
         return res
 
     def step(self, action):
@@ -72,7 +79,8 @@ class State:
             self._offset -= LUBRICATION_LOOKBACK
             reward = LUBRICATION_REWARD
         elif action == Actions.Replacement:
-            self._offset = 1
+            self._offset = 15
+            self.reset(self._offset)
             reward = REPLACEMENT_REWARD
         else:
             self._offset += 1
@@ -89,15 +97,48 @@ class EngineEnv(gym.Env):
     metadata = {'render.modes':['human']}
     spec = gym.envs.registration.EnvSpec("EngineEnv-v0")
 
-    def __init__(self, previous_state_used=PREVIOUS_STATE_USED, reward_on_EOL=True):
+    def __init__(self, source_data, previous_state_used=PREVIOUS_STATE_USED, reward_on_EOL=True):
 
-        self._state = State(previous_state_used, reward_on_EOL)
+        self.config_obj = Configuration()
+        self._state = State(source_data, previous_state_used, reward_on_EOL)
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_shape = (self.config_obj.features_num) ### states shape, Engine contains 25 features
         self.observation_space = gym.spaces.Box(
             low = np.zeros(self.observation_shape),
             high = np.ones(self.observation_shape),
-            dtype = np.float16
+            # dtype = np.float16
         )
+        self.history_engine_list = []
     def reset(self):
+        
+        offset = self._state.previous_state_used
+        self._state.reset(offset)
+        self.history_engine_list.append(self._state._unit)
+        print("History sampled engine list:{}".format(self.history_engine_list))
+
+        return self._state.encode()
+    
+    def step(self, action_idx):
+        action = Actions(action_idx)
+        reward, done = self._state.step(action)
+        obs = self._state.encode()
+        truncated = None
+        info = {
+            "Engine": self._state._unit,
+            "Engine_max_cycle": self._state._cycle_num,
+            "Action": action,
+            "offset": self._state._offset,
+            "state_range": "[{}, {}]".format(-self._state.previous_state_used+ self._state._offset, self._state._offset),
+        }
+        return obs, reward, done, truncated, info
+
+    def render(slef, mode='human', close=False):
         pass
+
+    def close(self):
+        pass
+
+    def seed(self, seed=None):
+        self.np_random, seed1 = gym.utils.seeding.np_random(seed)
+        seed2 = gym.utils.seeding.hash_seed(seed1 + 1) % 2 ** 31
+        return [seed1, seed2]

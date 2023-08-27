@@ -24,3 +24,27 @@ class Configuration(object):
         # self.checkpoint_path = self.data_folder + "\\training_record\\cp.ckpt"
         # self.keras_model_path = self.data_folder + "\\training_record\\keras_model\\109-09-06_model.h5"
         self.keras_updated_model_path = os.path.join(self.data_folder, "training_record","keras_model","{}_model.h5".format(time.ctime().split()[0:3]))
+
+        
+        
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -15
+        self.REPLACEMENT_REWARD = -250
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -600
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 19
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 1000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.02
