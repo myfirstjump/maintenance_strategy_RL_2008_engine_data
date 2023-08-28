@@ -44,8 +44,8 @@ class State:
         # print("Engine data: {}".format(self.engine_data))
         self._unit_data = self.engine_data[self.engine_data["unit"] == self._unit]
         self._unit_data = self._unit_data.drop('unit', axis=1)
-        print("Sample 1 engine data from source data: {}".format(self._unit))
-        print(self._unit_data)
+        # print("Sample 1 engine data from source data: {}".format(self._unit))
+        # print(self._unit_data)
 
         self._offset = offset
         self._data = self._unit_data

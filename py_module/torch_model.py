@@ -56,12 +56,12 @@ class SimpleFFDQN(nn.Module):
         return val + (adv - adv.mean(dim=1, keepdim=True)) ### 對決DQN的實作方式 (dueling DQN)
 
 class SimpleDNN(nn.Module):
-    def __init__(self, obs_len, actions_n):
+    def __init__(self, obs_len, actions_n, previous_state_used):
     # def __init__(self, obs_len):
         super(SimpleDNN, self).__init__()
 
         self.seq = nn.Sequential(
-            nn.Linear(obs_len, 512),
+            nn.Linear(obs_len * previous_state_used, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
