@@ -136,7 +136,7 @@ class EngineEnv(gym.Env):
         offset = self._state.previous_state_used
         self._state.reset(offset)
         self.history_engine_list.append(self._state._unit)
-        print("History sampled engine list:{}".format(self.history_engine_list))
+        # print("History sampled engine list:{}".format(self.history_engine_list))
 
         return self._state.encode()
     

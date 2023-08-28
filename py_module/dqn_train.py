@@ -155,6 +155,8 @@ class RLModeTrian(object):
         env = EngineEnv(data)
         net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
         # net = SimpleDNN(env.observation_space.shape[0]).to(DEVICE)
+
+        ### target net用於生成網路比較用的target --> Q(s,a) = r + Q(t+1)(s, a)
         tgt_net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
         # tgt_net = SimpleDNN(env.observation_space.shape[0]).to(DEVICE)
         writer = SummaryWriter(comment="-" + args.run)
