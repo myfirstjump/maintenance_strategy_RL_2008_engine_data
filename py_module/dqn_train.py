@@ -36,16 +36,16 @@ EPSILON_START = config_obj.EPSILON_START
 EPSILON_FINAL = config_obj.EPSILON_FINAL
 
 
-### TBD
-SAVES_DIR = pathlib.Path("saves")
-EPS_START = 1.0
-EPS_FINAL = 0.1
-EPS_STEPS = 1000000
+# ### TBD
+# SAVES_DIR = pathlib.Path("saves")
+# EPS_START = 1.0
+# EPS_FINAL = 0.1
+# EPS_STEPS = 1000000
 
-REWARD_STEPS = 1000
-STATES_TO_EVALUATE = 250
+# REWARD_STEPS = 1000
+# STATES_TO_EVALUATE = 250
 
-REPLAY_INITIAL = 500
+# REPLAY_INITIAL = 500
 
 Experience = collections.namedtuple(
     'Experience', field_names=['state', 'action', 'reward',
@@ -173,12 +173,15 @@ class RLModeTrian(object):
 
         while True:
             frame_idx += 1
-            if frame_idx % 1000 == 0:
-                print(" === === === Training episode: {} === === ===".format(frame_idx))
+            
             
             epsilon = max(EPSILON_FINAL, EPSILON_START - frame_idx / EPSILON_DECAY_LAST_FRAME)
 
             reward = agent.play_step(net, epsilon, device=DEVICE)
+            if frame_idx % 1000 == 0:
+                print(" === === === Training episode: {} === === ===".format(frame_idx))
+                print("reward", reward)
+                print("total_rewards", total_rewards)
             if reward is not None:
                 total_rewards.append(reward)
                 speed = (frame_idx - ts_frame) / (time.time() - ts)
@@ -284,9 +287,6 @@ def calc_loss(batch, net, tgt_net, device="cpu"):
     # print("actions_vec", actions_vec, actions_vec.shape)
     # print("rewards_vec", rewards_vec, rewards_vec.shape)
     # print("done_mask", done_mask, done_mask.shape)
-
-
-    tmp = net(states_vec)
 
     state_action_values = net(states_vec).gather(1, actions_vec.unsqueeze(-1)).squeeze(-1)
     with torch.no_grad():

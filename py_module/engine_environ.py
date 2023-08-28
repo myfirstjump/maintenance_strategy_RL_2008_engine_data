@@ -79,16 +79,31 @@ class State:
             self._offset -= LUBRICATION_LOOKBACK
             reward = LUBRICATION_REWARD
         elif action == Actions.Replacement:
+            '''
+                Replacement動作不要使用reset來執行，因為設定reset會讓episode counter歸零。
+            '''
             self._offset = 15
-            self.reset(self._offset)
+            
+            self._unit = random.choice(range(1, ENGINE_AMOUNT)) ### sample 1 engine #
+
+            # print("Engine data: {}".format(self.engine_data))
+            self._unit_data = self.engine_data[self.engine_data["unit"] == self._unit]
+            self._unit_data = self._unit_data.drop('unit', axis=1)
+            # print("Sample 1 engine data from source data: {}".format(self._unit))
+            # print(self._unit_data)
+
+            self._data = self._unit_data
+            self._cycle_num = len(self._data)
+
             reward = REPLACEMENT_REWARD
         else:
             self._offset += 1
             reward = DO_NOTHING_REWARD
 
-        done |= self._offset > self._cycle_num ### 若offset > 最大cycle數，則done=True
+        done |= self._offset >= self._cycle_num ### 若offset > 最大cycle數，則done=True
 
         if done:
+            print("Engine Failure!!!")
             reward = FAILURE_REWARD ### 故障發生，-600分
         return reward, done
     
@@ -99,7 +114,12 @@ class EngineEnv(gym.Env):
 
     def __init__(self, source_data, previous_state_used=PREVIOUS_STATE_USED, reward_on_EOL=True):
 
+
         self.config_obj = Configuration()
+
+        self.max_episode_steps = 1000 ### 最大運行數=1000
+        self.step_counter = 0
+
         self._state = State(source_data, previous_state_used, reward_on_EOL)
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_shape = (self.config_obj.features_num) ### states shape, Engine contains 25 features
@@ -110,6 +130,8 @@ class EngineEnv(gym.Env):
         )
         self.history_engine_list = []
     def reset(self):
+
+        self.step_counter = 0
         
         offset = self._state.previous_state_used
         self._state.reset(offset)
@@ -119,6 +141,9 @@ class EngineEnv(gym.Env):
         return self._state.encode()
     
     def step(self, action_idx):
+        
+        self.step_counter += 1
+
         action = Actions(action_idx)
         reward, done = self._state.step(action)
         obs = self._state.encode()
@@ -130,6 +155,8 @@ class EngineEnv(gym.Env):
             "offset": self._state._offset,
             "state_range": "[{}, {}]".format(-self._state.previous_state_used+ self._state._offset, self._state._offset),
         }
+        done = self.step_counter >= self.max_episode_steps or done
+
         return obs, reward, done, truncated, info
 
     def render(slef, mode='human', close=False):
