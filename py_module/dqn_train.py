@@ -179,11 +179,10 @@ class RLModeTrian(object):
             
             epsilon = max(EPSILON_FINAL, EPSILON_START - frame_idx / EPSILON_DECAY_LAST_FRAME)
 
-            reward = agent.play_step(net, epsilon, device=DEVICE)
-            if frame_idx % 1000 == 0:
+            reward, action_counter_dict = agent.play_step(net, epsilon, device=DEVICE)
+            if frame_idx % 10000 == 0:
                 print(" === === === Training episode: {} === === ===".format(frame_idx))
-                print("reward", reward)
-                print("total_rewards", total_rewards)
+                # print("total_rewards", total_rewards)
             if reward is not None:
                 total_rewards.append(reward)
                 speed = (frame_idx - ts_frame) / (time.time() - ts)
@@ -191,13 +190,30 @@ class RLModeTrian(object):
                 ts = time.time()
                 m_reward = np.mean(total_rewards[-100:])
                 print("{}: done {} games, reward {}, eps {}, speed {} f/s".format(frame_idx, len(total_rewards), m_reward, epsilon, speed))
+                
                 writer.add_scalar("epsilon", epsilon, frame_idx)
                 writer.add_scalar("speed", speed, frame_idx)
                 writer.add_scalar("reward_100", m_reward, frame_idx)
                 writer.add_scalar("reward", reward, frame_idx)
+
+                writer.add_scalar("Steps", action_counter_dict['Step'], frame_idx)
+                writer.add_scalar("Do_nothing", action_counter_dict['Do_nothing'], frame_idx)
+                writer.add_scalar("Lubrication", action_counter_dict['Lubrication'], frame_idx)
+                writer.add_scalar("Replacement", action_counter_dict['Replacement'], frame_idx)
+
+                writer.add_histogram("Do_nothing Histogram during Degradation", action_counter_dict['Do_nothing_%'], bins='auto')
+                writer.add_histogram("Lubrication Histogram during Degradation", action_counter_dict['Lubrication_%'], bins='auto')
+                writer.add_histogram("Replacement Histogram during Degradation", action_counter_dict['Replacement_%'], bins='auto')
+
+                try:
+                    writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
+                    writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
+                    writer.add_histogram("Replacement Histogram during Degradation last 1000", action_counter_dict['Replacement_%'][-1000:], bins='auto')
+                except:
+                    pass
                 if best_m_reward is None or best_m_reward < m_reward:
-                    torch.save(net.state_dict(), ENV_NAME +
-                            "-best_%.0f.dat" % m_reward)
+                    # torch.save(net.state_dict(), ENV_NAME +
+                    #         "-best_%.0f.dat" % m_reward)
                     if best_m_reward is not None:
                         print("Best reward updated {} -> {}".format(best_m_reward, m_reward))
                     best_m_reward = m_reward
@@ -246,6 +262,7 @@ class Agent:
     @torch.no_grad()
     def play_step(self, net, epsilon=0.0, device="cpu"):
         done_reward = None
+        action_counter_dict = {'Step':None, "Do_nothing":None, "Lubrication":None, "Replacement":None, "Do_nothing_%":None, "Lubrication_%":None, "Replacement_%":None,}
 
         if np.random.random() < epsilon:
             action = self.env.action_space.sample()
@@ -270,9 +287,19 @@ class Agent:
         self.exp_buffer.append(exp)
         self.state = new_state
         if is_done:
+            print("Step count: {}, do_nothing count: {}, lubrication count: {}, replacment count: {}".format(self.env.step_counter, self.env.do_nothing_counter, self.env.lubrication_counter, self.env.replacement_counter))
+            action_counter_dict['Step'] = self.env.step_counter
+            action_counter_dict['Do_nothing'] = self.env.do_nothing_counter
+            action_counter_dict['Lubrication'] = self.env.lubrication_counter
+            action_counter_dict['Replacement'] = self.env.replacement_counter
+
+            action_counter_dict['Do_nothing_%'] = self.env.do_nothing_percent
+            action_counter_dict['Lubrication_%'] = self.env.lubrication_percent
+            action_counter_dict['Replacement_%'] = self.env.replacement_percent
+            
             done_reward = self.total_reward
             self._reset()
-        return done_reward
+        return done_reward, action_counter_dict
 
 
 def calc_loss(batch, net, tgt_net, device="cpu"):
