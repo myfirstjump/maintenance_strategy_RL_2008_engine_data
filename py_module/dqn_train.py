@@ -201,11 +201,11 @@ class RLModeTrian(object):
                 writer.add_scalar("Lubrication", action_counter_dict['Lubrication'], frame_idx)
                 writer.add_scalar("Replacement", action_counter_dict['Replacement'], frame_idx)
 
-                writer.add_histogram("Do_nothing Histogram during Degradation", action_counter_dict['Do_nothing_%'], bins='auto')
-                writer.add_histogram("Lubrication Histogram during Degradation", action_counter_dict['Lubrication_%'], bins='auto')
-                writer.add_histogram("Replacement Histogram during Degradation", action_counter_dict['Replacement_%'], bins='auto')
-
                 try:
+                    writer.add_histogram("Do_nothing Histogram during Degradation", action_counter_dict['Do_nothing_%'], bins='auto')
+                    writer.add_histogram("Lubrication Histogram during Degradation", action_counter_dict['Lubrication_%'], bins='auto')
+                    writer.add_histogram("Replacement Histogram during Degradation", action_counter_dict['Replacement_%'], bins='auto')
+
                     writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
                     writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
                     writer.add_histogram("Replacement Histogram during Degradation last 1000", action_counter_dict['Replacement_%'][-1000:], bins='auto')
