@@ -1,0 +1,34 @@
+0830_exp_1
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -100
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -1000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 200
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 1000#0
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+Trigger: max_episode_steps
+Step count: 1000, do_nothing count: 942, lubrication count: 54, replacment count: 4
+987222: done 1140 games, reward 178.2, eps 0.01, speed 123.7498563511102 f/s
+Trigger: max_episode_steps
+Step count: 1000, do_nothing count: 938, lubrication count: 60, replacment count: 2
+988222: done 1141 games, reward 192.4, eps 0.01, speed 124.43598449202113 f/s
+Best reward updated 191.72 -> 192.4
+Trigger: max_episode_steps
+Step count: 1000, do_nothing count: 940, lubrication count: 58, replacment count: 2
+989222: done 1142 games, reward 204.64, eps 0.01, speed 124.56962887059294 f/s
+Best reward updated 192.4 -> 204.64
+Solved in 989222 frames!
