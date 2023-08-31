@@ -156,3 +156,14 @@ Solved in 989222 frames!
         self.EPSILON_DECAY_LAST_FRAME = 150000
         self.EPSILON_START = 1.0
         self.EPSILON_FINAL = 0.01
+		
+		Trigger: max_episode_steps
+		{'Engine': 99, 'Engine_max_cycle': 263, 'Action': <Actions.Lubrication: 1>, 'offset': 5, 'state_range': '[0, 5]'}
+		Step count: 1000, do_nothing count: 830, lubrication count: 167, replacment count: 3
+		3347705: done 6440 games, reward -1925.95, eps 0.01, speed 123.68961982825611 f/s
+		Trigger: Engine Failure!!!
+		Step count: 288, do_nothing count: 172, lubrication count: 115, replacment count: 1
+		3347993: done 6441 games, reward -1934.13, eps 0.01, speed 120.56762423322712 f/s
+		Trigger: Engine Failure!!!
+		Step count: 388, do_nothing count: 318, lubrication count: 68, replacment count: 2
+		3348381: done 6442 games, reward -1940.93, eps 0.01, speed 114.49679929024774 f/s
