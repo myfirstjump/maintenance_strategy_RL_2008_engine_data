@@ -31,11 +31,11 @@ class NoisyLinear(nn.Linear):
 
 
 class SimpleFFDQN(nn.Module):
-    def __init__(self, obs_len, actions_n):
+    def __init__(self, obs_len, actions_n, previous_state_used):
         super().__init__()
 
         self.fc_val = nn.Sequential(
-            nn.Linear(obs_len, 512),
+            nn.Linear(obs_len * previous_state_used, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -43,7 +43,7 @@ class SimpleFFDQN(nn.Module):
         )
 
         self.fc_adv = nn.Sequential(
-            nn.Linear(obs_len, 512),
+            nn.Linear(obs_len * previous_state_used, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -63,10 +63,11 @@ class SimpleDNN(nn.Module):
         self.seq = nn.Sequential(
             nn.Linear(obs_len * previous_state_used, 512),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Linear(512, actions_n)
-            # nn.Linear(512, 3)
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, actions_n)
         )
         
     def forward(self, x):

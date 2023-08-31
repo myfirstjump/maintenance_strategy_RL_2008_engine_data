@@ -76,7 +76,8 @@ class State:
         done = False
         
         if action == Actions.Lubrication:
-            self._offset -= LUBRICATION_LOOKBACK
+
+            self._offset = max( self._offset - LUBRICATION_LOOKBACK, self.previous_state_used)
             reward = LUBRICATION_REWARD
         elif action == Actions.Replacement:
             '''
@@ -186,6 +187,7 @@ class EngineEnv(gym.Env):
 
         if self.step_counter >= self.max_episode_steps:
             print("Trigger: max_episode_steps")
+            print(info)
             done = True
 
         return obs, reward, done, truncated, info

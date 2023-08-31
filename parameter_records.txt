@@ -20,6 +20,7 @@
         self.EPSILON_DECAY_LAST_FRAME = 150000
         self.EPSILON_START = 1.0
         self.EPSILON_FINAL = 0.01
+		
 Trigger: max_episode_steps
 Step count: 1000, do_nothing count: 942, lubrication count: 54, replacment count: 4
 987222: done 1140 games, reward 178.2, eps 0.01, speed 123.7498563511102 f/s
@@ -32,3 +33,126 @@ Step count: 1000, do_nothing count: 940, lubrication count: 58, replacment count
 989222: done 1142 games, reward 204.64, eps 0.01, speed 124.56962887059294 f/s
 Best reward updated 192.4 -> 204.64
 Solved in 989222 frames!
+
+
+
+0831_exp_2
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 2
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 400
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+
+		Step count: 1000, do_nothing count: 957, lubrication count: 38, replacment count: 5
+		335379: done 371 games, reward 377.39, eps 0.01, speed 124.77593870726622 f/s
+		Best reward updated 362.0 -> 377.39
+		Trigger: Engine Failure!!!
+		Step count: 147, do_nothing count: 147, lubrication count: 0, replacment count: 0
+		335526: done 372 games, reward 351.75, eps 0.01, speed 118.58457076365315 f/s
+		Trigger: max_episode_steps
+		Step count: 1000, do_nothing count: 945, lubrication count: 53, replacment count: 2
+		336526: done 373 games, reward 381.22, eps 0.01, speed 125.44988499765209 f/s
+		Best reward updated 377.39 -> 381.22
+		Trigger: max_episode_steps
+		Step count: 1000, do_nothing count: 926, lubrication count: 71, replacment count: 3
+		337526: done 374 games, reward 404.75, eps 0.01, speed 124.79013480820575 f/s
+		Best reward updated 381.22 -> 404.75
+		Solved in 337526 frames!
+
+0831_exp_3
+	
+		nn.Linear(obs_len * previous_state_used, 512),
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, actions_n)
+			
+		        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 400
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		Step count: 1000, do_nothing count: 925, lubrication count: 74, replacment count: 1
+		839705: done 945 games, reward -342.64, eps 0.01, speed 127.84820366784969 f/s
+		Trigger: max_episode_steps
+		Step count: 1000, do_nothing count: 954, lubrication count: 40, replacment count: 6
+		840705: done 946 games, reward -326.55, eps 0.01, speed 123.00652013411255 f/s
+		Trigger: max_episode_steps
+		Step count: 1000, do_nothing count: 937, lubrication count: 61, replacment count: 2
+		841705: done 947 games, reward -306.29, eps 0.01, speed 114.0659068226865 f/s
+		Trigger: max_episode_steps
+		Step count: 1000, do_nothing count: 948, lubrication count: 47, replacment count: 5
+		842705: done 948 games, reward -308.42, eps 0.01, speed 125.3376310406477 f/s
+	
+0831_exp_4
+		self.previous_p_times = 5 ### RL states --> 10
+		
+		Step count: 1000, do_nothing count: 958, lubrication count: 38, replacment count: 4
+		686023: done 794 games, reward -415.69, eps 0.01, speed 99.09612409375497 f/s
+		Trigger: max_episode_steps
+		{'Engine': 118, 'Engine_max_cycle': 188, 'Action': <Actions.Nothing: 0>, 'offset': 80, 'state_range': '[70, 80]'}
+		Step count: 1000, do_nothing count: 951, lubrication count: 44, replacment count: 5
+		687023: done 795 games, reward -416.05, eps 0.01, speed 97.75907639704994 f/s
+		Trigger: max_episode_steps
+		{'Engine': 144, 'Engine_max_cycle': 272, 'Action': <Actions.Nothing: 0>, 'offset': 120, 'state_range': '[110, 120]'}
+		Step count: 1000, do_nothing count: 955, lubrication count: 41, replacment count: 4
+		688023: done 796 games, reward -412.39, eps 0.01, speed 95.61458579818259 f/s
+		
+0831_exp_5
+		self.previous_p_times = 5 ### RL states
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 50
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 5e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01

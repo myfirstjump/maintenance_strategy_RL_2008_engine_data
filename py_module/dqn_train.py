@@ -36,17 +36,6 @@ EPSILON_START = config_obj.EPSILON_START
 EPSILON_FINAL = config_obj.EPSILON_FINAL
 
 
-# ### TBD
-# SAVES_DIR = pathlib.Path("saves")
-# EPS_START = 1.0
-# EPS_FINAL = 0.1
-# EPS_STEPS = 1000000
-
-# REWARD_STEPS = 1000
-# STATES_TO_EVALUATE = 250
-
-# REPLAY_INITIAL = 500
-
 Experience = collections.namedtuple(
     'Experience', field_names=['state', 'action', 'reward',
                                'done', 'new_state'])
@@ -154,11 +143,11 @@ class RLModeTrian(object):
 
         env = EngineEnv(data)
         net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
-        # net = SimpleDNN(env.observation_space.shape[0]).to(DEVICE)
+        # net = SimpleFFDQN(env.observation_space.shape[0]).to(DEVICE)
 
         ### target net用於生成網路比較用的target --> Q(s,a) = r + Q(t+1)(s, a)
         tgt_net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
-        # tgt_net = SimpleDNN(env.observation_space.shape[0]).to(DEVICE)
+        # tgt_net = SimpleFFDQN(env.observation_space.shape[0]).to(DEVICE)
         writer = SummaryWriter(comment="-" + args.run)
         print(net)
 
@@ -180,9 +169,9 @@ class RLModeTrian(object):
             epsilon = max(EPSILON_FINAL, EPSILON_START - frame_idx / EPSILON_DECAY_LAST_FRAME)
 
             reward, action_counter_dict = agent.play_step(net, epsilon, device=DEVICE)
-            if frame_idx % 10000 == 0:
-                print(" === === === Training episode: {} === === ===".format(frame_idx))
-                # print("total_rewards", total_rewards)
+            # if frame_idx % 10000 == 0:
+            #     print(" === === === Training episode: {} === === ===".format(frame_idx))
+            #     # print("total_rewards", total_rewards)
             if reward is not None:
                 total_rewards.append(reward)
                 speed = (frame_idx - ts_frame) / (time.time() - ts)
@@ -206,9 +195,6 @@ class RLModeTrian(object):
                     writer.add_histogram("Lubrication Histogram during Degradation", action_counter_dict['Lubrication_%'], bins='auto')
                     writer.add_histogram("Replacement Histogram during Degradation", action_counter_dict['Replacement_%'], bins='auto')
 
-                    writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
-                    writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
-                    writer.add_histogram("Replacement Histogram during Degradation last 1000", action_counter_dict['Replacement_%'][-1000:], bins='auto')
                 except:
                     pass
                 if best_m_reward is None or best_m_reward < m_reward:
@@ -219,6 +205,12 @@ class RLModeTrian(object):
                     best_m_reward = m_reward
                 if m_reward > MEAN_REWARD_BOUND:
                     print("Solved in {} frames!".format(frame_idx))
+                    try:
+                        writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
+                        writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
+                        writer.add_histogram("Replacement Histogram during Degradation last 1000", action_counter_dict['Replacement_%'][-1000:], bins='auto')
+                    except:
+                        pass
                     break
 
             if len(buffer) < REPLAY_START_SIZE:
@@ -270,7 +262,7 @@ class Agent:
             # print("In agent:")
             state_a = np.array([self.state], copy=False)
             # print("state_a", state_a, type(state_a))
-            state_v = torch.tensor(state_a).to(device).view((125))
+            state_v = torch.tensor(state_a).to(device).view((config_obj.features_num * config_obj.previous_p_times))
             
             q_vals_v = net(state_v)
             # print("q_vals_v ", q_vals_v)
