@@ -2,6 +2,7 @@ from py_module.config import Configuration
 from py_module.data_reader import DataReader
 from py_module.data_preprocessing import DataProprocessing
 from py_module.dqn_train import RLModeTrian
+from py_module.validation import ModelValidation
 
 import argparse
 import os
@@ -21,6 +22,7 @@ class MaintenanceStrategyRL(object):
         self.reader_obj = DataReader()
         self.data_preprocessing_obj = DataProprocessing()
         self.train_obj = RLModeTrian()
+        self.valid_obj = ModelValidation()
 
     def data_loading(self):
         file_path = os.path.join(self.config_obj.data_folder, self.config_obj.file_name)
@@ -38,11 +40,13 @@ class MaintenanceStrategyRL(object):
 
         return data
     
-    def model_train(self, data, val_data, args):
+    def model_train(self, data, args):
 
-        self.train_obj.model_training(data, val_data, args)
+        self.train_obj.model_training(data, args)
 
-
+    def model_validation(self, data, args):
+        
+        return self.valid_obj.validation_run(data, args)
 
 
 def main_flow(args):
@@ -53,12 +57,17 @@ def main_flow(args):
     data = main_obj.data_preprocessing(data)
     testing_data = main_obj.data_preprocessing(testing_data)
 
+    if args.run is not None:
     # Training
-    main_obj.model_train(data, testing_data, args)
+        main_obj.model_train(data, args)
+    else:
+        valid_results = main_obj.model_validation(data, args)
+        print(valid_results)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-r", "--run", required=True, help="Run name")
+    parser.add_argument("-r", "--run", required=False, help="Run name")
+    parser.add_argument("-v", "--valid", required=False, help="Provide model path")
     args = parser.parse_args()
 
     main_flow(args)

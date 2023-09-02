@@ -44,102 +44,8 @@ Experience = collections.namedtuple(
 class RLModeTrian(object):
     def __init__(self):
         pass
-    
-    # def model_training(self, data, val_data, args):
 
-    #     saves_path = SAVES_DIR / f"simple-{args.run}"
-    #     env = EngineEnv(data)
-    #     env_tst = EngineEnv(data)
-    #     env_val = EngineEnv(val_data)
-        
-    #     print("env.action_space.n", env.action_space.n)
-    #     net = SimpleFFDQN(env.observation_space.shape[0], env.action_space.n).to(DEVICE)
-    #     # net = SimpleDNN(env.observation_space.shape[0], env.action_space.n).to(DEVICE)
-    #     tgt_net = ptan.agent.TargetNet(net)
-
-    #     selector = ptan.actions.EpsilonGreedyActionSelector(EPS_START) ### 行動選擇器
-
-    #     eps_tracker = ptan.actions.EpsilonTracker(selector, EPS_START, EPS_FINAL, EPS_STEPS)
-    #     agent = ptan.agent.DQNAgent(net, selector, device=DEVICE)
-    #     exp_source = ptan.experience.ExperienceSourceFirstLast(env, agent, GAMMA, steps_count=REWARD_STEPS)
-    #     buffer = ptan.experience.ExperienceReplayBuffer(exp_source, REPLAY_SIZE)
-    #     optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
-    
-    #     def process_batch(engine, batch):
-    #         optimizer.zero_grad()
-    #         loss_v = common.calc_loss(
-    #             batch, net, tgt_net.target_model,
-    #             gamma=GAMMA ** REWARD_STEPS, device=DEVICE)
-    #         loss_v.backward()
-    #         optimizer.step()
-    #         eps_tracker.frame(engine.state.iteration)
-
-    #         if getattr(engine.state, "eval_states", None) is None:
-    #             eval_states = buffer.sample(STATES_TO_EVALUATE)
-    #             eval_states = [np.array(transition.state, copy=False)
-    #                         for transition in eval_states]
-    #             engine.state.eval_states = np.array(eval_states, copy=False)
-
-    #         return {
-    #             "loss": loss_v.item(),
-    #             "epsilon": selector.epsilon,
-    #         }
-    
-    #     engine = Engine(process_batch)
-    #     tb = common.setup_ignite(engine, exp_source, f"simple-{args.run}",
-    #                          extra_metrics=('values_mean',))
-    
-    #     @engine.on(ptan.ignite.PeriodEvents.ITERS_1000_COMPLETED)
-    #     def sync_eval(engine: Engine):
-    #         tgt_net.sync()
-
-    #         mean_val = common.calc_values_of_states(
-    #             engine.state.eval_states, net, device=DEVICE)
-    #         engine.state.metrics["values_mean"] = mean_val
-    #         if getattr(engine.state, "best_mean_val", None) is None:
-    #             engine.state.best_mean_val = mean_val
-    #         if engine.state.best_mean_val < mean_val:
-    #             print("{}: Best mean value updated {} -> {}".format(
-    #                 engine.state.iteration, engine.state.best_mean_val,
-    #                 mean_val))
-    #             path = saves_path / ("mean_value-{}.data".format(mean_val))
-    #             torch.save(net.state_dict(), path)
-    #             engine.state.best_mean_val = mean_val
-
-    #     @engine.on(ptan.ignite.PeriodEvents.ITERS_10000_COMPLETED)
-    #     def validate(engine: Engine):
-    #         res = validation.validation_run(env_tst, net, device=DEVICE)
-    #         print("{}: tst: {}".format(engine.state.iteration, res))
-    #         for key, val in res.items():
-    #             engine.state.metrics[key + "_tst"] = val
-    #         res = validation.validation_run(env_val, net, device=DEVICE)
-    #         print("{}: val: {}".format(engine.state.iteration, res))
-    #         for key, val in res.items():
-    #             engine.state.metrics[key + "_val"] = val
-    #         val_reward = res['episode_reward']
-    #         if getattr(engine.state, "best_val_reward", None) is None:
-    #             engine.state.best_val_reward = val_reward
-    #         if engine.state.best_val_reward < val_reward:
-    #             print("Best validation reward updated: {} -> {}, model saved".format(
-    #                 engine.state.best_val_reward, val_reward
-    #             ))
-    #             engine.state.best_val_reward = val_reward
-    #             path = saves_path / ("val_reward-{}.data".format(val_reward))
-    #             torch.save(net.state_dict(), path)
-        
-    #     event = ptan.ignite.PeriodEvents.ITERS_10000_COMPLETED
-    #     tst_metrics = [m + "_tst" for m in validation.METRICS]
-    #     tst_handler = tb_logger.OutputHandler(
-    #         tag="test", metric_names=tst_metrics)
-    #     tb.attach(engine, log_handler=tst_handler, event_name=event)
-
-    #     val_metrics = [m + "_val" for m in validation.METRICS]
-    #     val_handler = tb_logger.OutputHandler(
-    #         tag="validation", metric_names=val_metrics)
-    #     tb.attach(engine, log_handler=val_handler, event_name=event)
-    #     engine.run(common.batch_generator(buffer, REPLAY_INITIAL, BATCH_SIZE))
-
-    def model_training(self, data, val_data, args):
+    def model_training(self, data, args):
 
         env = EngineEnv(data)
         net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
@@ -198,13 +104,13 @@ class RLModeTrian(object):
                 except:
                     pass
                 if best_m_reward is None or best_m_reward < m_reward:
-                    # torch.save(net.state_dict(), ENV_NAME +
-                    #         "-best_%.0f.dat" % m_reward)
+
                     if best_m_reward is not None:
                         print("Best reward updated {} -> {}".format(best_m_reward, m_reward))
                     best_m_reward = m_reward
                 if m_reward > MEAN_REWARD_BOUND:
                     print("Solved in {} frames!".format(frame_idx))
+                    torch.save(net.state_dict(), args.run + "-best_{}.dat".format(m_reward))
                     try:
                         writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
                         writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
@@ -223,6 +129,7 @@ class RLModeTrian(object):
             batch = buffer.sample(BATCH_SIZE)
             loss_t = calc_loss(batch, net, tgt_net, device=DEVICE)
             loss_t.backward()
+            writer.add_scalar("Loss", loss_t, frame_idx)
             optimizer.step()
         writer.close()
 

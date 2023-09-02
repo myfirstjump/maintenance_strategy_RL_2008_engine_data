@@ -167,3 +167,115 @@ Solved in 989222 frames!
 		Trigger: Engine Failure!!!
 		Step count: 388, do_nothing count: 318, lubrication count: 68, replacment count: 2
 		3348381: done 6442 games, reward -1940.93, eps 0.01, speed 114.49679929024774 f/s
+
+0903_exp_1
+
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 200
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 16
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		nn.Linear(obs_len * previous_state_used, 512),
+		nn.ReLU(),
+		nn.Linear(512, 256),
+		nn.ReLU(),
+		nn.Linear(256, 128),
+		nn.ReLU(),
+		nn.Linear(128, actions_n)
+		
+		Trigger: max_episode_steps
+		{'Engine': 131, 'Engine_max_cycle': 263, 'Action': <Actions.Nothing: 0>, 'offset': 147, 'state_range': '[142, 147]'}
+		Step count: 1000, do_nothing count: 952, lubrication count: 45, replacment count: 3
+		858101: done 988 games, reward -346.43, eps 0.01, speed 126.97614247615986 f/s
+		Trigger: max_episode_steps
+		{'Engine': 216, 'Engine_max_cycle': 190, 'Action': <Actions.Nothing: 0>, 'offset': 77, 'state_range': '[72, 77]'}
+		Step count: 1000, do_nothing count: 938, lubrication count: 60, replacment count: 2
+		859101: done 989 games, reward -325.67, eps 0.01, speed 131.34109327366275 f/s
+	
+0903_exp_2
+		減小網路結構
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 200
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 16
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		nn.Linear(obs_len * previous_state_used, 256),
+		nn.ReLU(),
+		nn.Linear(256, 256),
+		nn.ReLU(),
+		nn.Linear(256, actions_n),
+		
+		Trigger: max_episode_steps
+		{'Engine': 94, 'Engine_max_cycle': 209, 'Action': <Actions.Nothing: 0>, 'offset': 145, 'state_range': '[140, 145]'}
+		Step count: 1000, do_nothing count: 950, lubrication count: 46, replacment count: 4
+		824462: done 931 games, reward -470.63, eps 0.01, speed 162.69259143337806 f/s
+		Trigger: Engine Failure!!!
+		Step count: 437, do_nothing count: 422, lubrication count: 14, replacment count: 1
+		824899: done 932 games, reward -490.57, eps 0.01, speed 144.95281829110425 f/s
+		Trigger: max_episode_steps
+		{'Engine': 203, 'Engine_max_cycle': 225, 'Action': <Actions.Nothing: 0>, 'offset': 29, 'state_range': '[24, 29]'}
+		Step count: 1000, do_nothing count: 945, lubrication count: 50, replacment count: 5
+		825899: done 933 games, reward -496.0, eps 0.01, speed 165.10595636991778 f/s
+
+0903_exp_3
+		提高batch_size -> 64
+
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 200
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 64
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01

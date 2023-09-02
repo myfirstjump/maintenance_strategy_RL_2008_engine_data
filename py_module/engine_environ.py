@@ -182,7 +182,7 @@ class EngineEnv(gym.Env):
             "Engine_max_cycle": self._state._cycle_num,
             "Action": action,
             "offset": self._state._offset,
-            "state_range": "[{}, {}]".format(-self._state.previous_state_used+ self._state._offset, self._state._offset),
+            "state_range": "[{}, {}]".format(-self._state.previous_state_used + self._state._offset, self._state._offset),
         }
 
         if self.step_counter >= self.max_episode_steps:

@@ -61,13 +61,20 @@ class SimpleDNN(nn.Module):
         super(SimpleDNN, self).__init__()
 
         self.seq = nn.Sequential(
-            nn.Linear(obs_len * previous_state_used, 512),
+            # nn.Linear(obs_len * previous_state_used, 512),
+            # nn.ReLU(),
+            # nn.Linear(512, 256),
+            # nn.ReLU(),
+            # nn.Linear(256, 128),
+            # nn.ReLU(),
+            # nn.Linear(128, actions_n)
+
+            nn.Linear(obs_len * previous_state_used, 256),
             nn.ReLU(),
-            nn.Linear(512, 256),
+            nn.Linear(256, 256),
             nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Linear(128, actions_n)
+            nn.Linear(256, actions_n),
+
         )
         
     def forward(self, x):

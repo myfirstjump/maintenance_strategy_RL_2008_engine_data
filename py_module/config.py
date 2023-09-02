@@ -18,7 +18,6 @@ class Configuration(object):
         self.train_engine_amount = 218
         self.test_engine_amount = 218
         self.standardization_features = ['op_setting_1', 'op_setting_2', 'op_setting_3'] + ['sensor_' + str(i) for i in range(1, 22)]
-        self.previous_p_times = 5 ### RL states
         self.checkpoint_path = os.path.join(self.data_folder, "training_record", "cp.ckpt")
         self.keras_model_path = os.path.join(self.data_folder, "training_record", "keras_model", "{}_model.h5".format(time.ctime().split()[0:3]))
         # self.checkpoint_path = self.data_folder + "\\training_record\\cp.ckpt"
@@ -36,12 +35,13 @@ class Configuration(object):
 
         ### RL strategy settings
         self.DEVICE = 'cpu'
-        self.MEAN_REWARD_BOUND = 50
+        self.MEAN_REWARD_BOUND = 200
+        self.previous_p_times = 5 ### RL states
 
         self.GAMMA = 0.99
-        self.BATCH_SIZE = 32
+        self.BATCH_SIZE = 64
         self.REPLAY_SIZE = 10000
-        self.LEARNING_RATE = 5e-4
+        self.LEARNING_RATE = 1e-4
         self.SYNC_TARGET_FRAMES = 10000
         self.REPLAY_START_SIZE = 10000
 
