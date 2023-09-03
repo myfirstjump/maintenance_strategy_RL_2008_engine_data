@@ -29,22 +29,22 @@ class Configuration(object):
         ### RL environment settings
         self.LUBRICATION_LOOKBACK = 10
         self.LUBRICATION_REWARD = -5
-        self.REPLACEMENT_REWARD = -200
+        self.REPLACEMENT_REWARD = -100
         self.DO_NOTHING_REWARD = 1
-        self.FAILURE_REWARD = -2000
+        self.FAILURE_REWARD = -5000
 
         ### RL strategy settings
         self.DEVICE = 'cpu'
-        self.MEAN_REWARD_BOUND = 200
+        self.MEAN_REWARD_BOUND = 100
         self.previous_p_times = 5 ### RL states
 
         self.GAMMA = 0.99
-        self.BATCH_SIZE = 64
+        self.BATCH_SIZE = 32
         self.REPLAY_SIZE = 10000
         self.LEARNING_RATE = 1e-4
         self.SYNC_TARGET_FRAMES = 10000
         self.REPLAY_START_SIZE = 10000
 
-        self.EPSILON_DECAY_LAST_FRAME = 150000
+        self.EPSILON_DECAY_LAST_FRAME = 500000
         self.EPSILON_START = 1.0
         self.EPSILON_FINAL = 0.01

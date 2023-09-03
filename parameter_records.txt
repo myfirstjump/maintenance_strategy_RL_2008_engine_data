@@ -279,3 +279,227 @@ Solved in 989222 frames!
         self.EPSILON_DECAY_LAST_FRAME = 150000
         self.EPSILON_START = 1.0
         self.EPSILON_FINAL = 0.01
+		
+		Trigger: max_episode_steps
+		{'Engine': 54, 'Engine_max_cycle': 249, 'Action': <Actions.Nothing: 0>, 'offset': 59, 'state_range': '[54, 59]'}
+		Step count: 1000, do_nothing count: 940, lubrication count: 57, replacment count: 3
+		3770320: done 4044 games, reward -260.53, eps 0.01, speed 141.5126579701059 f/s
+		Trigger: max_episode_steps
+		{'Engine': 119, 'Engine_max_cycle': 242, 'Action': <Actions.Lubrication: 1>, 'offset': 82, 'state_range': '[77, 82]'}
+		Step count: 1000, do_nothing count: 922, lubrication count: 77, replacment count: 1
+		3771320: done 4045 games, reward -255.67, eps 0.01, speed 137.68302694514963 f/s
+
+0903_exp_4
+		Epilson decay加快 (EPSILON_DECAY_LAST_FRAME = 150000 ---> 80000)
+		回饋值目標調降 200 --> 0
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -2000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 0
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 100000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		
+		Trigger: max_episode_steps
+		{'Engine': 92, 'Engine_max_cycle': 207, 'Action': <Actions.Nothing: 0>, 'offset': 126, 'state_range': '[121, 126]'}
+		Step count: 1000, do_nothing count: 935, lubrication count: 63, replacment count: 2
+		429415: done 484 games, reward -377.16, eps 0.01, speed 164.95392872587556 f/s
+		Trigger: max_episode_steps
+		{'Engine': 102, 'Engine_max_cycle': 222, 'Action': <Actions.Nothing: 0>, 'offset': 46, 'state_range': '[41, 46]'}
+		Step count: 1000, do_nothing count: 940, lubrication count: 55, replacment count: 5
+		430415: done 485 games, reward -362.51, eps 0.01, speed 157.26025548252602 f/s
+		
+0903_exp_5
+		提升failure之懲罰量 -2000 --> -5000
+		模型調整回雙層512
+		epilson遞減速度稍緩一點 80000 -> 100000
+		
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 50
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 100000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01		
+		
+		nn.Linear(obs_len * previous_state_used, 512),
+		nn.ReLU(),
+		nn.Linear(512, 512),
+		nn.ReLU(),
+		nn.Linear(512, actions_n),
+
+0903_exp_6
+		
+		依照Maxim的範例，Ch10他的epilson遞減應該比replay initial大10倍
+		epilson遞減速度再緩 100000 --> 500000 多一些探索
+
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -200
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 50
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01		
+		
+		Trigger: max_episode_steps
+		{'Engine': 26, 'Engine_max_cycle': 210, 'Action': <Actions.Lubrication: 1>, 'offset': 5, 'state_range': '[0, 5]'}
+		Step count: 1000, do_nothing count: 829, lubrication count: 168, replacment count: 3
+		789868: done 823 games, reward -725.07, eps 0.01, speed 100.13849338828248 f/s
+		Trigger: max_episode_steps
+		{'Engine': 109, 'Engine_max_cycle': 160, 'Action': <Actions.Nothing: 0>, 'offset': 89, 'state_range': '[84, 89]'}
+		Step count: 1000, do_nothing count: 893, lubrication count: 103, replacment count: 4
+		790868: done 824 games, reward -734.31, eps 0.01, speed 101.33603105054992 f/s
+		
+		
+0903_exp_7
+		Replacement的回饋應該要提升 -200 ---> -150
+		因為每支引擎的cycle數平均也才210，如果-200這樣會與運行獎勵抵銷。
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -150
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 50
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		nn.Linear(obs_len * previous_state_used, 512),
+		nn.ReLU(),
+		nn.Linear(512, 512),
+		nn.ReLU(),
+		nn.Linear(512, actions_n),		
+		
+		
+		
+		
+		
+0903_exp_8	
+
+		1. 再提高replacement回饋
+		2. tgt sync頻率提升
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -100
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 100
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 5000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		Trigger: max_episode_steps
+		{'Engine': 112, 'Engine_max_cycle': 226, 'Action': <Actions.Nothing: 0>, 'offset': 141, 'state_range': '[136, 141]'}
+		Step count: 1000, do_nothing count: 940, lubrication count: 57, replacment count: 3
+		1008371: done 1093 games, reward -715.47, eps 0.01, speed 105.87509139079293 f/s
+		Trigger: max_episode_steps
+		{'Engine': 120, 'Engine_max_cycle': 170, 'Action': <Actions.Nothing: 0>, 'offset': 31, 'state_range': '[26, 31]'}
+		Step count: 1000, do_nothing count: 956, lubrication count: 40, replacment count: 4
+		1009371: done 1094 games, reward -716.35, eps 0.01, speed 105.04420051779982 f/s
+
+0903_exp_9
+		tgt sync頻率回復到 5000 -> 10000
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -100
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 100
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		nn.Linear(obs_len * previous_state_used, 512),
+		nn.ReLU(),
+		nn.Linear(512, 512),
+		nn.ReLU(),
+		nn.Linear(512, actions_n),

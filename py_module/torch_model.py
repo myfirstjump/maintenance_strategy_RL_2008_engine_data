@@ -69,11 +69,11 @@ class SimpleDNN(nn.Module):
             # nn.ReLU(),
             # nn.Linear(128, actions_n)
 
-            nn.Linear(obs_len * previous_state_used, 256),
+            nn.Linear(obs_len * previous_state_used, 512),
             nn.ReLU(),
-            nn.Linear(256, 256),
+            nn.Linear(512, 512),
             nn.ReLU(),
-            nn.Linear(256, actions_n),
+            nn.Linear(512, actions_n),
 
         )
         
