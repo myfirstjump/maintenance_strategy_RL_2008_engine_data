@@ -503,3 +503,41 @@ Solved in 989222 frames!
 		nn.Linear(512, 512),
 		nn.ReLU(),
 		nn.Linear(512, actions_n),
+		
+		
+0905_exp_1
+		
+		SimpleDNN --> SimpleDNN_small  (參考Skordilis and Moghaddass 2020)
+		另可嘗試 optimizer: RMSprop lambda 0.001 tau 0.9
+		
+        
+        ### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -100
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cpu'
+        self.MEAN_REWARD_BOUND = 100
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+
+            nn.Linear(obs_len * previous_state_used, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, actions_n),
+			
+		

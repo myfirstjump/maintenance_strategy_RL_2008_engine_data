@@ -1,4 +1,4 @@
-from py_module.torch_model import NoisyLinear, SimpleFFDQN, SimpleDNN, DQNConv1D, DQNConv1DLarge
+from py_module.torch_model import NoisyLinear, SimpleFFDQN, SimpleDNN, DQNConv1D, DQNConv1DLarge, SimpleDNN_small
 from py_module.engine_environ import Actions, State, EngineEnv
 from py_module.config import Configuration
 from py_module import common, validation
@@ -48,11 +48,11 @@ class RLModeTrian(object):
     def model_training(self, data, args):
 
         env = EngineEnv(data)
-        net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
+        net = SimpleDNN_small(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
         # net = SimpleFFDQN(env.observation_space.shape[0]).to(DEVICE)
 
         ### target net用於生成網路比較用的target --> Q(s,a) = r + Q(t+1)(s, a)
-        tgt_net = SimpleDNN(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
+        tgt_net = SimpleDNN_small(env.observation_space.shape[0], env.action_space.n, config_obj.previous_p_times).to(DEVICE)
         # tgt_net = SimpleFFDQN(env.observation_space.shape[0]).to(DEVICE)
         writer = SummaryWriter(comment="-" + args.run)
         print(net)
@@ -115,6 +115,8 @@ class RLModeTrian(object):
                         writer.add_histogram("Do_nothing Histogram during Degradation last 1000", action_counter_dict['Do_nothing_%'][-1000:], bins='auto')
                         writer.add_histogram("Lubrication Histogram during Degradation last 1000", action_counter_dict['Lubrication_%'][-1000:], bins='auto')
                         writer.add_histogram("Replacement Histogram during Degradation last 1000", action_counter_dict['Replacement_%'][-1000:], bins='auto')
+
+                        writer.add_histogram("Replacement_Left_cycle", action_counter_dict['Replacement_Left_cycle'][-1000:], bins='auto')
                     except:
                         pass
                     break
@@ -195,6 +197,8 @@ class Agent:
             action_counter_dict['Do_nothing_%'] = self.env.do_nothing_percent
             action_counter_dict['Lubrication_%'] = self.env.lubrication_percent
             action_counter_dict['Replacement_%'] = self.env.replacement_percent
+
+            action_counter_dict['Replacement_Left_cycle'] = self.env.Replacement_Left_cycle
             
             done_reward = self.total_reward
             self._reset()

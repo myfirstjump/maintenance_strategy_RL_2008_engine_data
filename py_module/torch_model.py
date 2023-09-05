@@ -79,6 +79,31 @@ class SimpleDNN(nn.Module):
         
     def forward(self, x):
         return self.seq(x)
+    
+class SimpleDNN_small(nn.Module):
+    def __init__(self, obs_len, actions_n, previous_state_used):
+    # def __init__(self, obs_len):
+        super(SimpleDNN_small, self).__init__()
+
+        self.seq = nn.Sequential(
+            # nn.Linear(obs_len * previous_state_used, 512),
+            # nn.ReLU(),
+            # nn.Linear(512, 256),
+            # nn.ReLU(),
+            # nn.Linear(256, 128),
+            # nn.ReLU(),
+            # nn.Linear(128, actions_n)
+
+            nn.Linear(obs_len * previous_state_used, 64),
+            nn.ReLU(),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, actions_n),
+
+        )
+        
+    def forward(self, x):
+        return self.seq(x)
 
 
 class DQNConv1D(nn.Module):

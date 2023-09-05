@@ -50,6 +50,7 @@ class State:
         self._offset = offset
         self._data = self._unit_data
         self._cycle_num = len(self._data)
+        
 
     
     @property # 只讀取
@@ -83,6 +84,7 @@ class State:
             '''
                 Replacement動作不要使用reset來執行，因為設定reset會讓episode counter歸零。
             '''
+
             self._offset = self.previous_state_used ### 起步不為0，設定為k
             
             self._unit = random.choice(range(1, ENGINE_AMOUNT)) ### sample 1 engine #
@@ -131,6 +133,9 @@ class EngineEnv(gym.Env):
         self.lubrication_percent = []
         self.replacement_percent = []
 
+        ### 紀錄更換的時候，當下引擎剩餘多少cycle
+        self.Replacement_Left_cycle = []
+
         self._state = State(source_data, previous_state_used, reward_on_EOL)
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_shape = (self.config_obj.features_num) ### states shape, Engine contains 25 features
@@ -148,9 +153,13 @@ class EngineEnv(gym.Env):
         self.lubrication_counter = 0
         self.replacement_counter = 0
 
+        # self.cycle_left = self._state._cycle_num - self._state._offset
+
         self.do_nothing_percent = []
         self.lubrication_percent = []
         self.replacement_percent = []
+
+        self.Replacement_Left_cycle = []
         
         offset = self._state.previous_state_used
         self._state.reset(offset)
@@ -172,6 +181,8 @@ class EngineEnv(gym.Env):
         else:
             self.replacement_counter += 1
             self.replacement_percent.append(1 - (self._state._offset - self._state.previous_state_used) / (self._state._cycle_num - self._state.previous_state_used))
+            
+            self.Replacement_Left_cycle.append(self._state._cycle_num - self._state._offset)
 
         action = Actions(action_idx)
         reward, done = self._state.step(action)
