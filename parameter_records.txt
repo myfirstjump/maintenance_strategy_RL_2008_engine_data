@@ -540,4 +540,15 @@ Solved in 989222 frames!
             nn.ReLU(),
             nn.Linear(32, actions_n),
 			
-		
+		Trigger: max_episode_steps
+		{'Engine': 42, 'Engine_max_cycle': 241, 'Action': <Actions.Nothing: 0>, 'offset': 45, 'state_range': '[40, 45]'}
+		Step count: 1000, do_nothing count: 943, lubrication count: 52, replacment count: 5
+		858909: done 903 games, reward 49.38, eps 0.01, speed 226.90518512178986 f/s
+		Best reward updated -1.54 -> 49.38
+		Trigger: max_episode_steps
+		{'Engine': 207, 'Engine_max_cycle': 278, 'Action': <Actions.Nothing: 0>, 'offset': 58, 'state_range': '[53, 58]'}
+		Step count: 1000, do_nothing count: 920, lubrication count: 79, replacment count: 1
+		859909: done 904 games, reward 101.84, eps 0.01, speed 219.34904286498664 f/s
+		Best reward updated 49.38 -> 101.84
+
+	不知為何，Tensorboard沒有辦法顯是。
