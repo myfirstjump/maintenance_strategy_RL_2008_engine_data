@@ -40,8 +40,8 @@ class State:
         assert offset >= self.previous_state_used - 1
         ### 重新抽取一支引擎資料
         self._unit = random.choice(range(1, ENGINE_AMOUNT)) ### sample 1 engine #
-
-        # print("Engine data: {}".format(self.engine_data))
+        
+        # print("Reset抽引擎: {}".format(self._unit))
         self._unit_data = self.engine_data[self.engine_data["unit"] == self._unit]
         self._unit_data = self._unit_data.drop('unit', axis=1)
         # print("Sample 1 engine data from source data: {}".format(self._unit))
@@ -89,7 +89,7 @@ class State:
             
             self._unit = random.choice(range(1, ENGINE_AMOUNT)) ### sample 1 engine #
 
-            # print("Engine data: {}".format(self.engine_data))
+            # print("Replace抽引擎: {}".format(self._unit))
             self._unit_data = self.engine_data[self.engine_data["unit"] == self._unit]
             self._unit_data = self._unit_data.drop('unit', axis=1)
             # print("Sample 1 engine data from source data: {}".format(self._unit))
@@ -186,6 +186,10 @@ class EngineEnv(gym.Env):
 
         action = Actions(action_idx)
         reward, done = self._state.step(action)
+
+        if self.step_counter > 990:
+            print("Step後step_counter: {}".format(self.step_counter))
+            print("Step後offset: {}".format(self._state._offset))
         obs = self._state.encode()
         truncated = None
         info = {

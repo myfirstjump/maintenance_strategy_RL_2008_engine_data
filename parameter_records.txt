@@ -551,4 +551,76 @@ Solved in 989222 frames!
 		859909: done 904 games, reward 101.84, eps 0.01, speed 219.34904286498664 f/s
 		Best reward updated 49.38 -> 101.84
 
-	不知為何，Tensorboard沒有辦法顯是。
+	不知為何，Tensorboard沒有辦法顯示。
+	
+
+0910_exp_4
+		測試nvidia-docker
+		
+		### RL environment settings
+        self.LUBRICATION_LOOKBACK = 10
+        self.LUBRICATION_REWARD = -5
+        self.REPLACEMENT_REWARD = -100
+        self.DO_NOTHING_REWARD = 1
+        self.FAILURE_REWARD = -5000
+
+        ### RL strategy settings
+        self.DEVICE = 'cuda' ### "cpu"
+        self.MEAN_REWARD_BOUND = 100
+        self.previous_p_times = 5 ### RL states
+
+        self.GAMMA = 0.99
+        self.BATCH_SIZE = 32
+        self.REPLAY_SIZE = 10000
+        self.LEARNING_RATE = 1e-4
+        self.SYNC_TARGET_FRAMES = 10000
+        self.REPLAY_START_SIZE = 10000
+
+        self.EPSILON_DECAY_LAST_FRAME = 500000
+        self.EPSILON_START = 1.0
+        self.EPSILON_FINAL = 0.01
+		
+		Trigger: max_episode_steps
+		{'Engine': 207, 'Engine_max_cycle': 278, 'Action': <Actions.Nothing: 0>, 'offset': 20, 'state_range': '[15, 20]'}
+		Step count: 1000, do_nothing count: 903, lubrication count: 95, replacment count: 2
+		981535: done 1020 games, reward 51.16, eps 0.01, speed 131.94365275601945 f/s
+		Trigger: max_episode_steps
+		{'Engine': 126, 'Engine_max_cycle': 241, 'Action': <Actions.Nothing: 0>, 'offset': 46, 'state_range': '[41, 46]'}
+		Step count: 1000, do_nothing count: 913, lubrication count: 86, replacment count: 1
+		982535: done 1021 games, reward 51.91, eps 0.01, speed 131.95336601412058 f/s
+		Trigger: max_episode_steps
+		{'Engine': 188, 'Engine_max_cycle': 246, 'Action': <Actions.Nothing: 0>, 'offset': 27, 'state_range': '[22, 27]'}
+		Step count: 1000, do_nothing count: 909, lubrication count: 89, replacment count: 2
+		983535: done 1022 games, reward 102.67, eps 0.01, speed 130.45390126244968 f/s
+		Best reward updated 60.21 -> 102.67
+		Solved in 983535 frames!
+		
+		
+0913_valid
+		過程發現，到達max_episode_steps=1000時，_offset總是136
+		
+		Step後step_counter: 993
+		Step後offset: 140
+		Step後step_counter: 994
+		Step後offset: 130
+		Step後step_counter: 995
+		Step後offset: 131
+		Step後step_counter: 996
+		Step後offset: 132
+		Step後step_counter: 997
+		Step後offset: 133
+		Step後step_counter: 998
+		Step後offset: 134
+		Step後step_counter: 999
+		Step後offset: 135
+		Step後step_counter: 1000
+		Step後offset: 136
+		Trigger: max_episode_steps
+		
+		發現將cycle數作為變數的話，每次固定140就會持續潤滑。
+		建議若要讓NN學會隱藏狀態(hidden states)的話，不要加入cycle一起訓練!
+		
+		self.features_num = 25 --> 24
+		
+		
+0913_exp_1_gpu

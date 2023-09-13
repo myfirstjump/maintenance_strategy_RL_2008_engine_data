@@ -7,6 +7,7 @@ from py_module.validation import ModelValidation
 import argparse
 import os
 import pandas as pd
+import time
 
 class MaintenanceStrategyRL(object):
 
@@ -46,7 +47,7 @@ class MaintenanceStrategyRL(object):
 
     def model_validation(self, data, args):
         
-        return self.valid_obj.validation_run(data, args)
+        return self.valid_obj.validation_run(data, args, device='cuda')
 
 
 def main_flow(args):
@@ -57,11 +58,14 @@ def main_flow(args):
     data = main_obj.data_preprocessing(data)
     testing_data = main_obj.data_preprocessing(testing_data)
 
+
     if args.run is not None:
     # Training
+        time_start = time.time()
         main_obj.model_train(data, args)
+        print("Training time: {} with {}".format(time.time() - time_start, main_obj.config_obj.DEVICE))
     else:
-        valid_results = main_obj.model_validation(data, args)
+        valid_results = main_obj.model_validation(testing_data, args)
         print(valid_results)
 
 if __name__ == "__main__":

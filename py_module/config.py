@@ -9,7 +9,7 @@ class Configuration(object):
         self.file_name = "train.txt"
 
         self.features_name = ['unit', 'cycle', 'op_setting_1', 'op_setting_2', 'op_setting_3',] + ['sensor_' + str(i) for i in range(1, 24)]
-        self.features_num = 25
+        self.features_num = 24
 
         self.test_data_folder = os.path.join("datasets", "Data_2008_PHM")
         self.test_file_name = "final_test.txt"
@@ -34,7 +34,7 @@ class Configuration(object):
         self.FAILURE_REWARD = -5000
 
         ### RL strategy settings
-        self.DEVICE = 'cpu'
+        self.DEVICE = 'cuda' ### "cpu"
         self.MEAN_REWARD_BOUND = 100
         self.previous_p_times = 5 ### RL states
 

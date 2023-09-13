@@ -15,6 +15,8 @@ class DataProprocessing(object):
 
         data = self.data_col_rename(data, new_col_name)
         data = data.drop(labels=['sensor_22', 'sensor_23'], axis='columns') ### raw data有多出兩個欄位為空值，故去除。
+
+        data = data.drop(labels=['cycle'], axis='columns') ### cycle數，對於NN獲取hidden states似乎有不好的影響。(2023-09-13)
         # data = self.define_and_add_RUL_column(data)
         # data = self.clip_variables(data, variable='RUL', max_=130, min_=0)
 

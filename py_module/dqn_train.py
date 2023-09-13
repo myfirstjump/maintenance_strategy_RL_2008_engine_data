@@ -161,7 +161,7 @@ class Agent:
         self.total_reward = 0.0
 
     @torch.no_grad()
-    def play_step(self, net, epsilon=0.0, device="cpu"):
+    def play_step(self, net, epsilon=0.0, device="cuda"):
         done_reward = None
         action_counter_dict = {'Step':None, "Do_nothing":None, "Lubrication":None, "Replacement":None, "Do_nothing_%":None, "Lubrication_%":None, "Replacement_%":None,}
 
